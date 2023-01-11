@@ -1,6 +1,7 @@
-from imgmaker import imgmaker
-from algosdk.v2client.indexer import IndexerClient
 from datetime import datetime
+
+from algosdk.v2client.indexer import IndexerClient
+from imgmaker import imgmaker
 
 indexer = IndexerClient(
     "",
