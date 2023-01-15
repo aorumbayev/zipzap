@@ -21,7 +21,8 @@ i = imgmaker()
 
 i.generate(
     "watermark",
-    {   "title": "oba",
+    {
+        "title": "oba",
         "left_text": subtitle,
         "fa_icon": "fas fa-link",
         "brand_text": title,
