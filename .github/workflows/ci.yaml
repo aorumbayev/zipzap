@@ -30,11 +30,6 @@ jobs:
       - name: Install chromedriver
         run: PYTHONPATH="." imgmaker chromedriver
 
-      - uses: pre-commit/action@v3.0.0
-        name: "Linters and formatters check"
-        with:
-          extra_args: --all-files --show-diff-on-failure
-
       - name: Generate images
         run: |
           PYTHONPATH="." python src/oba/generate.py
