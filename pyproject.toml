@@ -6,9 +6,9 @@ authors = ["Altynbek Orumbayev <aorumbayev@protonmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-imgmaker = "^0.2"
 Jinja2 = "^3.1.2"
 py-algorand-sdk = "^2.0.0"
+imgmaker = {git = "ssh://git@github.com/aorumbayev/imgmaker.git", rev = "master"}
 
 [tool.poetry.dev-dependencies]
 black = "^22.12.0"

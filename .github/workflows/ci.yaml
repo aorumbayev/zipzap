@@ -1,0 +1,66 @@
+name: Generate images
+
+on:
+  schedule:
+  - cron: '0 0 * * *'
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.head_ref || github.ref_name }}
+
+jobs:
+  process_deposits:
+    name: Run city influence worker
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: images
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9.9
+
+      - name: Set up Poetry
+        uses: abatilo/actions-poetry@v2.1.6
+        with:
+          poetry-version: 1.1.6
+
+      - name: Install python dependencies
+        run: poetry install
+
+      - name: Install chromedriver
+        run: PYTHONPATH="." poetry run imgmaker chromedriver
+
+      - uses: pre-commit/action@v3.0.0
+        name: "Linters and formatters check"
+        with:
+          extra_args: --all-files --show-diff-on-failure
+
+      - name: Generate images
+        run: |
+          PYTHONPATH="." poetry run python src/oba/generate.py
+
+      - name: Commit files
+        id: commit_files
+        if: always()
+        run: |
+          git config --local user.email "aorumbayev@pm.me"
+          git config --local user.name "github-actions[bot]"
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "chore: refreshed images 🤖" -a
+            echo "HAS_COMMITS=true" >> "$GITHUB_ENV"
+          else
+            echo "no changes - skipping "
+            echo "HAS_COMMITS=false" >> "$GITHUB_ENV"
+          fi
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        if: env.HAS_COMMITS != false
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: images
